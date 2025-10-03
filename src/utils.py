@@ -1,27 +1,22 @@
 from typing import List
 import os
 from openai import OpenAI
+import json
 
 DENYLIST_FILE = "denylist.txt"
+CORPUS_FILE = "corpus.json"
 
 
-CORPUS = [
-    "Python is a versatile programming language known for its simplicity and readability.",
-    "Machine learning involves training algorithms to identify patterns in data.",
-    "FastAPI is a web framework for building APIs with Python.",
-    "Embeddings convert text into numerical vectors for semantic understanding.",
-    "Retrieval-augmented generation combines search with language model generation.",
-    "Large Language Models (LLMs) are neural networks trained on massive text datasets.",
-    "LLMs can generate human-like text based on prompts and context.",
-    "The Transformer architecture uses self-attention mechanisms to process sequences.",
-    "Transformers revolutionized natural language processing with parallel processing capabilities.",
-    "BERT and GPT are both Transformer-based models with different architectures.",
-    "Deep learning uses neural networks with multiple layers to learn hierarchical representations.",
-    "Backpropagation is the core algorithm for training deep neural networks.",
-    "Convolutional Neural Networks (CNNs) excel at processing grid-like data such as images.",
-    "Fine-tuning adapts pre-trained LLMs for specific tasks or domains.",
-    "Multi-head attention allows Transformers to focus on different parts of input simultaneously.",
-]
+def load_corpus(filepath: str) -> List[str]:
+    """
+    Load the text corpus from a JSON file.
+
+    The JSON file should contain a list of strings, e.g.
+    ["sentence 1", "sentence 2", ...].
+    """
+    with open(filepath, encoding="utf-8") as f:
+        data = json.load(f)
+    return data
 
 
 def load_denylist(filepath: str) -> set[str]:
@@ -33,6 +28,8 @@ def load_denylist(filepath: str) -> set[str]:
     with open(filepath) as f:
         return {line.strip().lower() for line in f}
 
+
+CORPUS = load_corpus(CORPUS_FILE)
 
 DENYLIST = load_denylist(DENYLIST_FILE)
 
