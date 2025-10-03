@@ -76,11 +76,11 @@ def generate_response(
     """
     Retrieve relevant snippets and generate an answer.
 
-    Uses Qdrant search with k=5 by default.
+    Uses Qdrant search with k=3 by default.
     """
     top_snippets = retrieve_documents(
         query,
-        k=5,
+        k=3,
         qdrant_client=qdrant_client,
         collection_name=collection_name,
         embedding_client=embedding_client,

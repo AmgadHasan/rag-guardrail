@@ -34,6 +34,16 @@ The API will be available at `http://127.0.0.1:8000`. Access the interactive doc
 - **POST /answer** – Submit a question and get answers and relevant chunks.
 - The service returns the answer and the source snippets used.
 
+## Index Configs
+
+We compared two indexing configs:
+1. cosine similiarity with k=7
+2. cosine similiarity with k=3
+
+We found that 1 was more expensive (num of tokens) and slower (higher latency) compared to 2, while not affecting the accuracy of the output much. Most of the needed snippets were in the top 2 results. This is mostly because the corpus is small (less than 20 snippets total) and diverse enough. Additionally, the smaller context allowed the model to focus more on the correct information and prevent [context rot](https://research.trychroma.com/context-rot) especially since we're using a small LLM (llama3.1-8b).
+
+We decided to use `k = 3` going forward
+
 ## Guardrail
 
 We've implemented a denylist as a form of a guardaril mechanism. The list is implemented as a txt file, where each line contains a prohibited term. We perform a substring match on the lowercase query against each denylist term.
