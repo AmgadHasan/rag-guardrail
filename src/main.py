@@ -6,7 +6,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
 
 from src.schemas import QueryRequest, Snippet, AnswerResponse
-from src.utils import check_denylist, embed_text, CORPUS
+from src.utils import contains_forbidden_terms, embed_text, CORPUS
 from src.core import generate_response
 
 app = FastAPI(title="RAG Guardrail API")
@@ -26,7 +26,6 @@ def startup_event():
     # chat
     chat_api_key = os.getenv("OPENAI_CHAT_API_KEY")
     chat_base_url = os.getenv("OPENAI_CHAT_BASE_URL")
-    chat_model = os.getenv("OPENAI_CHAT_MODEL")
     # Embeddings
     embedding_api_key = os.getenv("OPENAI_EMBEDDING_API_KEY")
     embedding_base_url = os.getenv("OPENAI_EMBEDDING_BASE_URL")
@@ -77,7 +76,7 @@ def answer_query(req: QueryRequest) -> AnswerResponse:
     Handle the /answer endpoint: process query, check guardrail, retrieve snippets, generate answer.
     """
     user_query = req.query
-    if check_denylist(user_query):
+    if contains_forbidden_terms(user_query):
         raise HTTPException(
             status_code=422,
             detail="Query contains forbidden terms. Please rephrase your question.",

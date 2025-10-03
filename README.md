@@ -1,5 +1,7 @@
 # rag-guardrail
 
+This project provides an AI-powered question answering API. It uses vector search to find relevant information from a text corpus. OpenAI generates helpful answers based on the retrieved content. A guardrail prevents queries containing forbidden terms. Built with FastAPI for simple integration.
+
 # How to run
 This project requires `uv`
 

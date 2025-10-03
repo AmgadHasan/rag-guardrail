@@ -37,7 +37,7 @@ def load_denylist(filepath: str) -> set[str]:
 DENYLIST = load_denylist(DENYLIST_FILE)
 
 
-def check_denylist(query: str) -> bool:
+def contains_forbidden_terms(query: str) -> bool:
     """
     Check if the query contains any forbidden terms from the denylist.
 
@@ -81,7 +81,7 @@ def generate_chat_response(client: OpenAI, messages: List[dict]) -> str:
     model = os.getenv("OPENAI_CHAT_MODEL")
     try:
         response = client.chat.completions.create(
-            model=model,  # or any model set in the client defaults
+            model=model,
             messages=messages,
             temperature=0.1,
             max_tokens=256,
