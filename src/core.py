@@ -4,6 +4,26 @@ from src.utils import embed_text, generate_chat_response
 from src.schemas import Snippet
 from textwrap import dedent
 
+system_message = """
+# Task Overview:
+You are a question answering chatbot. You are given the folliwng:
+1. Query: A question
+2. Context: Text that has been retrieved to help answer the query
+
+# Instructions:
+Use the context to generate an accurate, concise answer to the query. Only answer the query based on the context if possible
+If the context doesn't contain information to answer the query, convey this in the answer by saying "I can't answer the query based on the provided context"
+Do NOT answer the query based on your prior knowledge.
+
+# Style:
+The answer you generate must adhere to the following style:
+- It must be accurate
+- It must use a concise style
+- Use paragraphs with short sentences
+- Avoid using verbose languages and em dashes
+- It should be around 100 words or less
+"""
+
 
 def retrieve_documents(
     query: str,
@@ -61,7 +81,11 @@ def generate_answer(query: str, snippets: List[Snippet], chat_client: OpenAI) ->
         """
     )
     model_response = generate_chat_response(
-        client=chat_client, messages=[{"role": "user", "content": user_message}]
+        client=chat_client,
+        messages=[
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message},
+        ],
     )
     return model_response
 
@@ -86,4 +110,5 @@ def generate_response(
         embedding_client=embedding_client,
     )
     generated_answer = generate_answer(query, top_snippets, chat_client)
+    print(generated_answer)
     return top_snippets, generated_answer
