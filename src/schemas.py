@@ -8,6 +8,7 @@ class QueryRequest(BaseModel):
 
 class Snippet(BaseModel):
     text: str
+    score: float
 
 
 class AnswerResponse(BaseModel):

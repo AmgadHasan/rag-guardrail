@@ -1,7 +1,6 @@
 from typing import List
 import os
 from openai import OpenAI
-import polars as pl
 
 DENYLIST_FILE = "denylist.txt"
 
@@ -61,9 +60,32 @@ def embed_text(client: OpenAI, texts: List[str]) -> List[List[float]]:
     return [emb.embedding for emb in response.data]
 
 
-def create_corpus_dataframe(client: OpenAI, corpus: List[str]) -> pl.DataFrame:
+def generate_chat_response(client: OpenAI, messages: List[dict]) -> str:
     """
-    Embed the corpus texts and create a Polars DataFrame with text and embedding columns.
+    Sends a list of chat messages to the OpenAI API and returns the assistant's reply.
+
+    Parameters
+    ----------
+    client : OpenAI
+        An instantiated OpenAI client (e.g., `OpenAI(api_key=...)`).
+    messages : List[dict]
+        A list of message dictionaries in the format expected by the API,
+        e.g. [{"role": "user", "content": "Hello"}].
+
+    Returns
+    -------
+    str
+        The content of the assistant's response. Returns an empty string if the
+        request fails.
     """
-    embeddings = embed_text(client, corpus)
-    return pl.DataFrame({"text": corpus, "embedding": embeddings})
+    model = os.getenv("OPENAI_CHAT_MODEL")
+    try:
+        response = client.chat.completions.create(
+            model=model,  # or any model set in the client defaults
+            messages=messages,
+            temperature=0.1,
+            max_tokens=256,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(e)
